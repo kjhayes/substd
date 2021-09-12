@@ -1,6 +1,7 @@
 #ifndef SUBSTD_RAY_HPP
 #define SUBSTD_RAY_HPP
 
+#include<substd/typedef.hpp>
 #include<substd/vec.hpp>
 #include<substd/math.hpp>
 
@@ -25,8 +26,8 @@ public:
     virtual void SetTipY(const T&) = 0;
     virtual vec2<T> GetTip() const = 0;
 
-    virtual void SetMagnitude(const gly_float&) = 0;
-    virtual gly_float GetMagnitude() const = 0;
+    virtual void SetMagnitude(const ss_float&) = 0;
+    virtual ss_float GetMagnitude() const = 0;
 
     virtual vec2<T> Normalized() const = 0;
 };
@@ -58,8 +59,8 @@ public:
     virtual void SetTipY(const T& y) override {SetDirectionX(y-origin.y);}
     virtual vec2<T> GetTip() const override {return origin+dir;}
 
-    virtual void SetMagnitude(const gly_float& m) override {dir = Normalized()*m;}
-    virtual gly_float GetMagnitude() const override {return dir.Magnitude();}
+    virtual void SetMagnitude(const ss_float& m) override {dir = Normalized()*m;}
+    virtual ss_float GetMagnitude() const override {return dir.Magnitude();}
 
     virtual vec2<T> Normalized() const override {return dir / GetMagnitude();}
 };
@@ -68,7 +69,7 @@ public:
 template<class T>
 struct BasicMagRay : public BasicRay<T> {
 protected:
-    gly_float magnitude;
+    ss_float magnitude;
     virtual void CalculateMagnitude(){magnitude = BasicRay<T>::dir.Magnitude();}
 public:
     BasicMagRay():BasicRay<T>(),magnitude(0.0f){}
@@ -81,7 +82,7 @@ public:
     virtual void SetDirectionX(const T& x) override {if(BasicRay<T>::dir.x!=x){BasicRay<T>::dir.x=x; CalculateMagnitude();}}
     virtual void SetDirectionY(const T& y) override {if(BasicRay<T>::dir.y!=y){BasicRay<T>::dir.y=y; CalculateMagnitude();}}
 
-    virtual gly_float GetMagnitude() const override {return magnitude;}
+    virtual ss_float GetMagnitude() const override {return magnitude;}
 };
 
 template<class T>
@@ -110,8 +111,8 @@ public:
     virtual void SetTipY(const T&) {}
     virtual vec2<T> GetTip() const {return vec2<T>(origin.x+dir, origin.y);}
 
-    virtual void SetMagnitude(const gly_float& m) {dir = Normalized().x * m;}
-    virtual gly_float GetMagnitude() const {return Math::Abs(dir);}
+    virtual void SetMagnitude(const ss_float& m) {dir = Normalized().x * m;}
+    virtual ss_float GetMagnitude() const {return Math::Abs(dir);}
 
     virtual vec2<T> Normalized() const {
         if(dir == 0){return vec2<T>(0,0);}
@@ -146,8 +147,8 @@ public:
     virtual void SetTipY(const T& y) {dir = y;}
     virtual vec2<T> GetTip() const {return vec2<T>(origin.x, origin.y+dir);}
 
-    virtual void SetMagnitude(const gly_float& m) {dir = Normalized().y * m;}
-    virtual gly_float GetMagnitude() const {return Math::Abs(dir);}
+    virtual void SetMagnitude(const ss_float& m) {dir = Normalized().y * m;}
+    virtual ss_float GetMagnitude() const {return Math::Abs(dir);}
 
     virtual vec2<T> Normalized() const {
         if(dir == 0){return vec2<T>(0,0);}

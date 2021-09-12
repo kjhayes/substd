@@ -5,6 +5,7 @@
 #include<substd/rect.hpp>
 #include<substd/ray.hpp>
 #include<substd/math.hpp>
+#include<substd/corner.hpp>
 
 namespace ss{
 
@@ -20,8 +21,8 @@ bool ExclusiveOverlap(const Range<T>& a, const Range<T>& b){
 
 template<class T>
 bool Overlap(const Rect<T>& a, const Rect<T>& b){
-    vec2<T> ac = a.GetCorner(BOTTOM_LEFT);
-    vec2<T> bc = b.GetCorner(BOTTOM_LEFT);
+    vec2<T> ac = a.GetCorner(CORNER_BOTTOM_LEFT);
+    vec2<T> bc = b.GetCorner(CORNER_BOTTOM_LEFT);
     if(
         (ac.x < bc.x + b.dimensions.x) &&
         (bc.x < ac.x + a.dimensions.x) &&
@@ -33,8 +34,8 @@ bool Overlap(const Rect<T>& a, const Rect<T>& b){
 
 template<class T>
 bool Overlap(const Ray<T>& ray, const Rect<T>& rect){
-    vec2<T> bl_time = (rect.GetCorner(BOTTOM_LEFT) - ray.GetOrigin()); //Distance;
-    vec2<T> tr_time = (rect.GetCorner(TOP_RIGHT) - ray.GetOrigin()); //Distance;
+    vec2<T> bl_time = (rect.GetCorner(CORNER_BOTTOM_LEFT) - ray.GetOrigin()); //Distance;
+    vec2<T> tr_time = (rect.GetCorner(CORNER_TOP_RIGHT) - ray.GetOrigin()); //Distance;
     vec2<T> inv_dir = 1.0f/ray.GetDirection();
     bl_time.x *= inv_dir.x;
     bl_time.y *= inv_dir.y;

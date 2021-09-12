@@ -5,14 +5,14 @@ namespace ss{
 
 class Transform;
 
-class Transformable
+class ITransformable
 {
 protected:
     ss::Transform* transform;
 public:
-    Transformable();
-    Transformable(Transform* parent);
-    ~Transformable();
+    ITransformable();
+    ITransformable(Transform* parent);
+    ~ITransformable();
     Transform* GetTransform();
 };
 

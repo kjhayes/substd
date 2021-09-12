@@ -11,7 +11,7 @@ namespace ss
 
 class Transform : public Tree
 {
-    friend class Transformable;
+    friend class ITransformable;
 
     protected:
 //Variables

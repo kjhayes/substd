@@ -7,7 +7,7 @@ add_library(${CMAKE_PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/cellmap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/readfile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/util.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/transformable.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/itransformable.cpp
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/include")

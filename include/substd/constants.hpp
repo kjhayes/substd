@@ -1,0 +1,9 @@
+#ifndef SUBSTD_CONSTANTS_HPP
+#define SUBSTD_CONSTANTS_HPP
+
+constexpr double SS_PI = 3.14159265358979323846;
+constexpr double SS_TAU = 6.28318530717958647692;
+constexpr double SS_PI_DIV_180 = 0.01745329251;
+constexpr double SS_180_DIV_PI = 57.2957795131;
+
+#endif

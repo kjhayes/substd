@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.10.2)
 
 project(substd)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-install(TARGETS ${CMAKE_PROJECT_NAME} LIBRARY)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME} TYPE INCLUDE)
+install(TARGETS substd LIBRARY)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME} TYPE INCLUDE)

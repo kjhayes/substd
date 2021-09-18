@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.10.2)
 
-add_library(${CMAKE_PROJECT_NAME} STATIC 
+add_library(substd STATIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/dool.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/transform.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tree.cpp
@@ -10,4 +10,4 @@ add_library(${CMAKE_PROJECT_NAME} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/itransformable.cpp
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(substd PUBLIC "${CMAKE_SOURCE_DIR}/include")

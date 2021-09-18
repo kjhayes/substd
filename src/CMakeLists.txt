@@ -10,4 +10,4 @@ add_library(substd STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/itransformable.cpp
 )
 
-target_include_directories(substd PUBLIC "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(substd PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")

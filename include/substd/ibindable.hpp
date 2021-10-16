@@ -6,7 +6,7 @@ namespace ss{
 template<class self>
 class IBindable {
 private:
-    static IBindable<self>* currently_active = nullptr;
+    static IBindable<self>* currently_active;
 public:
     void SmartBind(){
         if(this != currently_active){
@@ -16,6 +16,8 @@ public:
     }
     virtual void Bind() = 0;
 };
+
+template<class self> IBindable<self>* IBindable<self>::currently_active = nullptr;
 
 }
 

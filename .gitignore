@@ -34,3 +34,5 @@
 # Build Folders
 builds
 build
+html
+latex

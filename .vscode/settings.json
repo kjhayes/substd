@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "xutility": "cpp",
+        "algorithm": "cpp",
+        "array": "cpp"
+    }
+}

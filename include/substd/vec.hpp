@@ -1,249 +1,263 @@
+/**
+ * @file
+ * @author Kevin Hayes
+ * @include array iterator algorithm functional type_traits iostream
+*/
+
 #ifndef SUBSTD_VEC_HPP
 #define SUBSTD_VEC_HPP
 
-#include<substd/typedef.hpp>
+#include<array>
+#include<iterator>
+#include<algorithm>
+#include<functional>
+#include<type_traits>
 #include<iostream>
-#include<cmath>
 
 namespace ss
 {
 
-template<typename T> class vec3;
-template<typename T> class vec4;
+/**
+ * @class vec
+ * 
+ * @tparam T Type of the vector, if it is a fundamental type, it must be arithmetic 
+ * @tparam dim The size of the vector. Must be greater than zero.
+*/
+template<typename T, std::size_t dim=1> 
+class vec : public std::array<T, dim> {
+    static_assert(!((std::is_fundamental_v<T>)^(std::is_arithmetic_v<T>)), "Fundamental types passed as the template parameter of ss::vec<> are required to be arithmetic");
+    static_assert(dim > 0, "ss::vec<> requires at least l dimension");
 
-template<typename T> class vec2
-{
+protected:
+    using base = std::array<T, dim>;
+    using V = vec<T, dim>;
+
+    template<typename OT, size_t Odim>
+    V GenerateBinary(const vec<OT, Odim>& other, const std::function<T(const T&, const OT&)>& f) const {
+        V ret;
+        if constexpr(dim >= Odim){
+            std::transform(other.begin(), other.end(), base::begin(), ret.begin(), f);
+        }
+        else {
+            std::transform(base::begin(), base::end(), other.begin(), ret.begin(), f);
+        }
+        return ret;
+    }
+    
+    template<typename S>
+    V GenerateUnary(const std::function<T(const T&)>& f) const {
+        V ret;
+        std::transform(base::begin(), base::end(), ret.begin(), f);
+        return ret;
+    }
+    
+    template<typename OT, size_t Odim>
+    void ReflexiveBinary(const vec<OT, Odim>& other, const std::function<void(T&, const OT&)>& f){
+        if constexpr(dim >= Odim){
+            std::transform(other.begin(), other.end(), base::begin(), f);
+        }
+        else {
+            std::transform(base::begin(), base::end(), other.begin(), f);
+        }
+    }
+    void ReflexiveUnary(const std::function<void(T&)>& f){
+        std::transform(base::begin(), base::end(), base::begin(), f);
+    }
+
 public:
-    T x,y;
-
-    vec2(const T& x = (T)0.0f, const T& y = (T)0.0f):x(x), y(y){}
-	vec2(const vec2<T>& other):x(other.x), y(other.y){}
-	vec2(const T(&array)[2]):x(array[0]),y(array[1]){}
-	
-    vec2<T> Sum(const vec2<T>& other) const {return vec2<T>(x+other.x, y+other.y);};    
-    void Add(const vec2<T>& other) {*this = this->Sum(other);}
-
-    vec2<T> Dif(const vec2<T>& other) const {return vec2<T>(x-other.x, y-other.y);}
-    void Sub(const vec2<T>& other) {*this = this->Dif(other);}
-    
-    vec2<T> Prod(const T& scalar) const {return vec2<T>(x*scalar, y*scalar);}
-    vec2<T> LeftProd(const T& scalar) const {return vec2<T>(scalar*x, scalar*x);}
-    void Mult(const T& scalar) {*this = this->Prod(scalar);}
-    
-    vec2<T> Quot(const T& scalar) const {return vec2<T>(x/scalar, y/scalar);}
-    vec2<T> LeftQuot(const T& scalar) const {return vec2<T>(scalar/x, scalar/y);}
-    void Div(const T& scalar) {*this = this->Quot(scalar);}
-
-    T MagnitudeSqr() const {return (x*x)+(y*y);}
-    T Magnitude() const {return sqrt((x*x)+(y*y));}
-
-    T Dot(const vec2<T>& other) const {return (x*other.x)+(y*other.y);}
-    bool Equals(const vec2<T>& other) const {return ((x==other.x) && (y==other.y));}
-
-    //operator overloading
-    void operator=(const vec2<T>& other){x = other.x; y = other.y;}
-    
-    vec2<T> operator+(const vec2<T>& other) const {return Sum(other);}  
-    void operator+=(const vec2<T>& other) {Add(other);}
-    
-    vec2<T> operator-(const vec2<T>& other) const {return Dif(other);}
-    void operator-=(const vec2<T>& other) {Sub(other);}
-    
-    vec2<T> operator*(const T& scalar) const {return Prod(scalar);}
-    friend vec2<T> operator*(const T& scalar,const vec2<T>& v){return v.LeftProd(scalar);}
-    void operator*=(const T& scalar) {Mult(scalar);}
-    
-    vec2<T> operator/(const T& scalar) const {return Quot(scalar);}
-    friend vec2<T> operator/(const T& scalar,const vec2<T>& v){return v.LeftQuot(scalar);}
-    void operator/=(const T& scalar) {Div(scalar);}
-    
-    bool operator==(const vec2<T>& other) const {return Equals(other);}
-    bool operator!=(const vec2<T>& other) const {return !Equals(other);}
-
-    bool operator>(const vec2<T>& other) const {
-        if(x > other.x){return true;}
-        return y > other.y;
+    /**
+     * @brief Default Constructor
+    */
+    vec(){}
+    /**
+     * @brief Fill Constructor
+    */
+    vec(const T& t){
+        std::fill(base::begin(), base::end(), t);
     }
-    bool operator<(const vec2<T>& other) const {
-        if(x < other.x){return true;}
-        return y < other.y;
+    /**
+     * @brief Range Copy Constructor
+    */
+    template<typename OT, size_t Odim, template<typename ROT, size_t ROdim> typename R>
+    vec(const R<OT, Odim>& other){
+        if constexpr(dim >= Odim) {
+            std::copy(other.begin(), other.end(), base::begin());
+        }
+        else {
+            std::copy_n(other.begin(), dim, base::begin());
+        }    
     }
-    bool operator>=(const vec2<T>& other) const {
-        return !(*this < other);
-    }
-    bool operator<=(const vec2<T>& other) const {
-        return !(*this > other);
+    /**
+     * @brief Initializer List Constructor
+    */
+    template<typename OT>
+    constexpr vec(std::initializer_list<OT> i){
+        if (dim >= i.size()) {
+            std::copy(i.begin(), i.end(), base::begin());
+        }
+        else {
+            std::copy_n(i.begin(), dim, base::begin());
+        }
     }
 
-    friend std::ostream& operator<<(std::ostream& o,const vec2<T>& v)
-    {o<<"("<<v.x<<", "<<v.y<<")";return o;}
-	
-	explicit operator vec3<T>() const {return vec3<T>(this->x, this->y);}
-	explicit operator vec4<T>() const {return vec4<T>(this->x, this->y);}
+    /**
+     * @brief Range Copy Assignment Operator
+    */
+    template<typename OT, size_t Odim, template<typename ROT, size_t ROdim> typename R>
+    void operator=(const R<OT, Odim>& other){
+        if constexpr(dim >= Odim) {
+            std::copy(other.begin(), other.end(), base::begin());
+        }
+        else {
+            std::copy_n(other.begin(), dim, base::begin());
+        }    
+    }
 
-    template<class O> operator vec2<O>() const {return vec2<O>((O)this->x, (O)this->y);}
+    //Generated
+
+    template<typename OT, size_t Odim>
+    V Sum(const vec<OT, Odim>& other) const {
+        return GenerateBinary<OT, Odim>(other, [](const T& a, const OT& b)->T{return a+b;});
+    }
+    template<typename OT, size_t Odim>
+    V Dif(const vec<OT, Odim>& other) const {
+        return GenerateBinary(other, [](const T& a, const OT& b)->T{return a-b;});
+    }
+
+    template<typename S>
+    V Prod(const S& s) const {
+        return GenerateUnary([s](const T& a)->T{return a*s;});
+    }
+    template<typename S>
+    V Quot(const S& s) const {
+        return GenerateUnary([s](const T& a)->T{return a/s;});
+    }
+    template<typename S>
+    V LeftProd(const S& s) const {
+        return GenerateUnary([s](const T& a)->T{return s*a;});
+    }
+    template<typename S>
+    V LeftQuot(const S& s) const {
+        return GenerateUnary([s](const T& a)->T{return s/a;});
+    }
+    
+    //Reflexive
+
+    template<typename OT, size_t Odim>
+    void Add(const vec<OT, Odim>& other) {
+        ReflexiveBinary(other, [](T& a, const OT& b)->void{a += b;});
+    }
+    template<typename OT, size_t Odim>
+    void Sub(const vec<OT, Odim>& other) {
+        ReflexiveBinary(other, [](T& a, const OT& b)->void{a -= b;});
+    }
+
+    template<typename S>
+    void Mul(const S& s){
+        ReflexiveUnary([s](T& a)->void{a *= s;});
+    }
+    template<typename S>
+    void Div(const S& s){
+        ReflexiveUnary([s](T& a)->void{a /= s;});
+    }
+    
+    template<typename S>
+    void LeftMul(const S& s){
+        ReflexiveUnary([s](T& a)->void{a = s*a;});
+    }
+    template<typename S>
+    void LeftDiv(const S& s){
+        ReflexiveUnary([s](T& a)->void{a = s/a;});
+    }
+
+    template<typename OT, size_t Odim>
+    auto Dot(const vec<OT, Odim>& other) const {
+        auto sum = T(0)*OT(0);
+        if constexpr (dim >= Odim){
+            for(int i = 0; i < Odim; i++){
+                sum += (base::at(i) * other.at(i));
+            }
+        }
+        else{
+            for(int i = 0; i < dim; i++){
+                sum += (base::at(i) * other.at(i));
+            }
+        }
+        return sum;
+    }
+    
+    auto MagnitudeSqr() const {
+        auto sum = T(0) * T(0);
+        std::for_each(base::begin(), base::end(), [sum](const T& t)->void{sum += (t*t);})
+        return sum;
+    }
+
+    template<typename OT = T>
+    auto Magnitude() const {
+        return Sqrt<OT>(MagnitudeSqr());
+    }
+
+    template<typename OT, size_t Odim>
+    V operator+(const vec<OT, Odim>& other) const {return Sum(other);}  
+    template<typename OT, size_t Odim>
+    void operator+=(const vec<OT, Odim>& other) {Add(other);}
+    
+    template<typename OT, size_t Odim>
+    V operator-(const vec<OT, Odim>& other) const {return Dif(other);}
+    template<typename OT, size_t Odim>
+    void operator-=(const vec<OT, Odim>& other) {Sub(other);}
+    
+    template<typename S>
+    V operator*(const S& scalar) const {return Prod(scalar);}
+    template<typename S>
+    friend S operator*(const S& scalar,const V& v){return v.LeftProd(scalar);}
+    template<typename S>
+    void operator*=(const S& scalar) {Mult(scalar);}
+    
+    template<typename S>
+    V operator/(const S& scalar) const {return Quot(scalar);}
+    template<typename S>
+    friend S operator/(const S& scalar,const V& v){return v.LeftQuot(scalar);}
+    template<typename S>
+    void operator/=(const S& scalar) {Div(scalar);}
+
+    friend std::ostream& operator<<(std::ostream& o, const V& v)
+    {
+        o<<"("<<v.front();
+        for(auto iter = v.begin()+1; iter!=v.end(); iter++){
+            o<<", "<<(*iter);
+        }
+        o<<")";
+        return o;
+    }
+
+    template<size_t u=0>
+    static constexpr V Unit(){
+        static_assert(u<dim);
+        V ret(0);
+        ret.at(u) = 1;
+        return ret;
+    }
 };
 
-template<typename T> class vec3
-{
-public:
-    T x, y, z;
-    
-    vec3(const T& x = (T)0.0f, const T& y = (T)0.0f, const T& z = (T)0.0f):x(x), y(y), z(z){}
-    vec3(const vec3<T>& other):x(other.x), y(other.y), z(other.z){}
-    vec3(const T(&array)[3]):x(array[0]),y(array[1]),z(array[2]){}
-    vec3(const vec2<T>& front, const T& z):x(front.x), y(front.y), z(z){}
-    vec3(const T& x, const vec2<T>& back):x(x), y(back.x), z(back.y){}
-    
-    vec3<T> Sum(const vec3<T>& other)const{return vec3<T>(x+other.x, y+other.y, z+other.z);}
-    void Add(const vec3<T>& other){*this = this->Sum(other);}
-    
-    vec3<T> Dif(const vec3<T>& other)const{return vec3<T>(x-other.x, y-other.y, z-other.z);}
-    void Sub(const vec3<T>& other){*this = this->Dif(other);}
+template<typename T>
+using vec2 = vec<T,2>;
+template<typename T>
+using vec3 = vec<T,3>;
+template<typename T>
+using vec4 = vec<T,4>;
 
-    vec3<T> Prod(const T& scalar)const{return vec3<T>(x*scalar, y*scalar, z*scalar);}
-    vec3<T> LeftProd(const T& scalar)const{return vec3<T>(scalar*x, scalar*y, scalar*z);}
-    void Mult(const T& scalar){*this = this->Prod(scalar);}
-    
-    vec3<T> Quot(const T& scalar)const{return vec3<T>(x/scalar, y/scalar, z/scalar);}
-    vec3<T> LeftQuot(const T& scalar)const{return vec3<T>(scalar/x, scalar/y, scalar/z);}
-    void Div(const T& scalar){*this = this->Quot(scalar);}
+using vec2f = vec2<float>;
+using vec3f = vec3<float>;
+using vec4f = vec4<float>;
 
-    T Dot(const vec3<T>& other)const {return (x*other.x)+(y*other.y)+(z*other.z);}
-    vec3<T> Cross(const vec3<T>& other)const
-    {return vec3<T>((y*other.z)-(z*other.y), (z*other.x)+(x*other.z), (x*other.y)+(y*other.x));}
-    
-    T MagnitudeSqr() const {return (x*x)+(y*y)+(z*z);}
-    T Magnitude() const {return sqrt((x*x)+(y*y)+(z*z));}
+using vec2d = vec2<double>;
+using vec3d = vec3<double>;
+using vec4d = vec4<double>;
 
-    bool Equals(const vec3<T>& other)const{return ((x==other.x) && (y==other.y) && (z==other.z));}
-
-    //operator overloading
-    void operator=(const vec3<T>& other){x = other.x; y = other.y; z = other.z;}
-
-    vec3<T> operator+(const vec3<T>& other)const{return Sum(other);}
-    void operator+=(const vec3<T>& other){Add(other);}
-    
-    vec3<T> operator-(const vec3<T>& other)const{return Dif(other);}
-    void operator-=(const vec3<T>& other){Sub(other);}
-    
-    vec3<T> operator*(const T& scalar)const{return Prod(scalar);}
-    void operator*=(const T& scalar){Mult(scalar);}
-    
-    vec3<T> operator/(const T& scalar)const{return Quot(scalar);}
-    void operator/=(const T& scalar){Div(scalar);}
-    
-    bool operator==(const vec3<T>& other)const{return Equals(other);}
-    bool operator!=(const vec3<T>& other)const{return !Equals(other);}
-
-    bool operator>(const vec3<T>& other) const {
-        if(x > other.x){return true;}
-        else if(y > other.y){return true;}
-        return z > other.z;
-    }
-    bool operator<(const vec3<T>& other) const {
-        if(x < other.x){return true;}
-        else if(y < other.y){return true;}
-        return z < other.z;    
-    }
-    bool operator>=(const vec3<T>& other) const {
-        return !(*this < other);
-    }
-    bool operator<=(const vec3<T>& other) const {
-        return !(*this > other);
-    }
-
-    friend std::ostream& operator<<(std::ostream& o,const vec3<T>& v)
-    {o<<"("<<v.x<<", "<<v.y<<", "<<v.z<<")";return o;}
-	
-	operator vec2<T>() const {return vec2<T>(this->x, this->y);}
-	explicit operator vec4<T>() const {return vec4<T>(this->x, this->y, this->z);}
-
-
-    template<class O> operator vec3<O>() const {return vec3<O>((O)this->x, (O)this->y, (O)this->z);}
-};
-
-template<typename T> class vec4
-{
-public:
-    T x, y, z, w;
-	
-    vec4(const T& x = (T)0.0f, const T& y = (T)0.0f, const T& z = (T)0.0f, const T& w = (T)0.0f):x(x), y(y), z(z), w(w){}
-	vec4(const vec4<T>& other):x(other.x),y(other.y),z(other.z),w(other.w){}
-    vec4(const T(&array)[4]):x(array[0]),y(array[1]),z(array[2]),w(array[3]){}
-    vec4(const vec2<T>& front, const T& z, const T& w):x(front.x), y(front.y), z(z), w(w){}
-    vec4(const T& x, const vec2<T>& middle, const T& w):x(x), y(middle.x), z(middle.y), w(w){}
-    vec4(const T& x, const T& y, const vec2<T>& back):x(x), y(y), z(back.x), w(back.y){}
-    vec4(const vec2<T>& front, const vec2<T>& back):x(front.x), y(front.y), z(back.x), w(back.y){}
-    vec4(const vec3<T>& front, const T& w):x(front.x), y(front.y), z(front.z), w(w){}
-    vec4(const T& x, const vec3<T>& back):x(x), y(back.x), z(back.y), w(back.z){}
-
-    vec4<T> Sum(const vec4<T>& other)const{return vec4<T>(x+other.x, y+other.y, z+other.z, w+other.w);}
-    void Add(const vec4<T>& other){*this = this->Sum(other);}
-
-    vec4<T> Dif(const vec4<T>& other)const{return vec4<T>(x-other.x, y-other.y, z-other.z, w-other.w);}
-    void Sub(const vec4<T>& other){*this = this->Dif(other);}
-
-    vec4<T> Prod(const T& scalar)const{return vec4<T>(x*scalar, y*scalar, z*scalar, w*scalar);}
-    vec4<T> LeftProd(const T& scalar)const{return vec4<T>(scalar*x, scalar*y, scalar*z, scalar*w);}
-    void Mult(const T& scalar){*this = this->Prod(scalar);}
-
-    vec4<T> Quot(const T& scalar)const{return vec4<T>(x/scalar, y/scalar, z/scalar, w*scalar);}
-    vec4<T> LeftQuot(const T& scalar)const{return vec4<T>(scalar/x, scalar/y, scalar/z, scalar/w);}
-    void Div(const T& scalar){*this = this->Quot(scalar);}
-
-    float Dot(const vec4<T>& other)const{return (x*other.x)+(y*other.y)+(z*other.z)+(w*other.w);}
-    
-    T MagnitudeSqr() const {return (x*x)+(y*y)+(z*z)+(w*w);}
-    T Magnitude() const {return sqrt((x*x)+(y*y)+(z*z)+(w*w));}
-    
-    bool Equals(const vec4<T>& other)const{return ((x==other.x) && (y==other.y) && (z==other.z) && (w==other.w));}
-
-    //operator overloading
-    void operator=(const vec4<T>& other){x = other.x; y = other.y; z = other.z; w = other.w;}
-
-    vec4<T> operator+(const vec4<T>& other)const{return Sum(other);}
-    void operator+=(const vec4<T>& other){Add(other);}
-    
-    vec4<T> operator-(const vec4<T>& other)const{return Dif(other);}
-    void operator-=(const vec4<T>& other){Sub(other);}
-
-    vec4<T> operator*(const T& scalar)const{return Prod(scalar);}
-    void operator*=(const T& scalar){Mult(scalar);}
-
-    vec4<T> operator/(const T& scalar)const{return Quot(scalar);}
-    void operator/=(const T& scalar){Div(scalar);}
-
-    bool operator==(const vec4<T>& other)const{return Equals(other);}
-    bool operator!=(const vec4<T>& other)const{return !Equals(other);}
-
-    bool operator>(const vec4<T>& other) const {
-        if(x > other.x){return true;}
-        else if(y > other.y){return true;}
-        else if(z > other.z){return true;}
-        return w > other.w;
-    }
-    bool operator<(const vec4<T>& other) const {
-        if(x < other.x){return true;}
-        else if(y < other.y){return true;}
-        else if(z < other.z){return true;}
-        return w < other.w;
-    }
-    bool operator>=(const vec4<T>& other) const {
-        return !(*this < other);
-    }
-    bool operator<=(const vec4<T>& other) const {
-        return !(*this > other);
-    }
-
-    friend std::ostream& operator<<(std::ostream& o,const vec4<T>& v)
-	{o<<"("<<v.x<<", "<<v.y<<", "<<v.z<<", "<<v.w<<")";return o;}
-
-	operator vec2<T>() const {return vec2<T>(this->x, this->y);}
-	operator vec3<T>() const {return vec3<T>(this->x, this->y, this->z);}
-
-    template<class O> operator vec4<O>() const {return vec4<O>((O)this->x, (O)this->y, (O)this->z, (O)this->w);}
-};
+using vec2i = vec2<int>;
+using vec3i = vec3<int>;
+using vec4i = vec4<int>;
 
 }
-#endif // GLEWY_VEC_HPP
+#endif // SUBSTD_VEC_HPP

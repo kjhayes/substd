@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @author Kevin Hayes
+ * @brief contains various cache class definitions
+*/
+
 #ifndef SUBSTD_CACHE_HPP
 #define SUBSTD_CACHE_HPP
 
@@ -7,6 +13,16 @@
 
 namespace ss{
 
+/**
+ * @class Cache
+ * 
+ * @brief abstract base class for Cache objects
+ * 
+ * Caches store CachedType (s) in buckets depending on GrouperType
+ * 
+ * @tparam GrouperType 
+ * @tparam CachedType 
+*/
 template<class GrouperType, class CachedType> class Cache{
 public:
     Cache(const GrouperType& grouper):grouper(grouper){}

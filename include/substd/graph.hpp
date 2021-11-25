@@ -99,6 +99,13 @@ class Tree
             }       
         }
 
+        /**
+         * @fn GetParent
+         * @return Tree<self>* A pointer to the parent of this node
+         * @remark Can return nullptr
+         */
+        virtual Tree<self>* GetParent() const {return parent;}
+
         ///@fn IsRoot
         bool IsRoot() const {return parent == nullptr;}
 

@@ -2,15 +2,15 @@
 #define SUBSTD_RECT_HPP
 
 #include<substd/vec.hpp>
-#include<substd/corner.hpp>
+#include<substd/constants.hpp>
 
 namespace ss{
 
-const vec2<ss_float> UnitCorner[4] = {
-    {-0.5f,-0.5f},
-    {0.5f,-0.5f},
-    {-0.5f,0.5f},
-    {0.5f,0.5f}
+const vec2<float> UnitCorner[4] = {
+    {-0.5,-0.5},
+    {0.5,-0.5},
+    {-0.5,0.5},
+    {0.5,0.5}
 };
 
 template<class T>

@@ -9,10 +9,13 @@
 
 namespace ss{
 
-constexpr double PI = 3.14159265358979323846;
-constexpr double TAU = 6.28318530717958647692;
-constexpr double PI_DIV_180 = 0.01745329251;
-constexpr double _180_DIV_PI = 57.2957795131;
+///@typedef trig_t Type used for trigonometric functions.
+using trig_t = double;
+
+constexpr trig_t PI = 3.14159265358979323846;
+constexpr trig_t TAU = 6.28318530717958647692;
+constexpr trig_t PI_DIV_180 = 0.01745329251;
+constexpr trig_t _180_DIV_PI = 57.2957795131;
 
 enum CORNER{
     BOTTOM_LEFT = 0,

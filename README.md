@@ -1,5 +1,5 @@
 # substd
 
-A General Purpose C++ Utility Library
+A General Purpose Header Only C++ Utility Library
 
 Initially Taken From Another Project, Glewy.

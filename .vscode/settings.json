@@ -2,6 +2,13 @@
     "files.associations": {
         "xutility": "cpp",
         "algorithm": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "cstdlib": "cpp"
+    },
+    "cmake.configureOnOpen": false,
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#540B4D",
+        "titleBar.activeBackground": "#75106C",
+        "titleBar.activeForeground": "#FEFBFE"
     }
 }

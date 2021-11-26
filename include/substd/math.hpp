@@ -61,6 +61,40 @@ namespace ss{
         return Min<T>(Abs<T>(to-a),Abs<T>(to-b));
     }
 
+    ///@fn InclusiveBetween
+    template<typename T>
+    bool InclusiveBetween(const T& a, const T& b, const T& between){
+        if(between < b){
+            return between >= a;
+        }
+        else{
+            return between <= a;
+        }
+    }
+    
+    ///@fn ExclusiveBetween
+    template<typename T>
+    bool ExclusiveBetween(const T& a, const T& b, const T& between){
+        if(between < b){
+            return between > a;
+        }
+        else{
+            return (between < a) && (between != b);
+        }
+    }
+
+    /**
+     * @fn LinearRayHit
+     * @brief Trims a 1 dimensional ray formed by origin and dir as if it hit wall_pos
+     * @return T The new length of the ray 
+     */
+    template<class T>
+    T LinearRayHit(const T& origin, const T& dir, const T& wall_pos){
+        if(!InclusiveBetween(origin,origin+dir,wall_pos)){return dir;}
+        else{return wall_pos-origin;}
+    }
+
+
     //Trigonometic Functions
 
     inline constexpr trig_t DegreeToRad(const trig_t& deg){

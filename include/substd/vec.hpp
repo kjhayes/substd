@@ -48,7 +48,13 @@ protected:
         std::transform(base::begin(), base::end(), ret.begin(), f);
         return ret;
     }
-    
+    template<typename S>
+    vec<S,dim> GenerateLeftUnary(const std::function<S(const T&)>& f) const {
+        vec<S,dim> ret;
+        std::transform(base::begin(), base::end(), ret.begin(), f);
+        return ret;
+    }
+
     template<typename OT, size_t Odim>
     void ReflexiveBinary(const vec<OT, Odim>& other, const std::function<void(T&, const OT&)>& f){
         if constexpr(dim >= Odim){
@@ -139,13 +145,13 @@ public:
     }
     ///@fn LeftProd
     template<typename S>
-    V LeftProd(const S& s) const {
-        return GenerateUnary([s](const T& a)->T{return (T)(s*a);});
+    vec<S, dim> LeftProd(const S& s) const {
+        return GenerateLeftUnary<S>([s](const T& a)->S{return (S)(s*a);});
     }
     ///@fn LeftQuot
     template<typename S>
-    V LeftQuot(const S& s) const {
-        return GenerateUnary([s](const T& a)->T{return (T)(s/a);});
+    vec<S, dim> LeftQuot(const S& s) const {
+        return GenerateLeftUnary<S>([s](const T& a)->S{return (S)(s/a);});
     }
     
     ///@fn Add
@@ -204,9 +210,19 @@ public:
     }
 
     ///@fn Magnitude
-    template<typename OT = T>
+    template<typename OT = ss_trig>
     auto Magnitude() const {
         return Sqrt<OT>(MagnitudeSqr());
+    }
+
+    ///@fn Normalized
+    vec<ss_trig, dim> Normalized() const {
+        return LeftProd<ss_trig>(1/Magnitude());
+    }
+
+    ///@fn Homogenized
+    vec<T,dim+1> Homogenized(const T& fill = 1) const {
+        return vec<T,dim+1>(*this, fill);
     }
 
     //Operators

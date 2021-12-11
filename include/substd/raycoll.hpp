@@ -7,6 +7,23 @@
 #include<substd/math.hpp>
 #include<substd/util.hpp>
 
+namespace ss{
+
+/**
+ * @fn PointsBetween
+ * @return std::list<vec<T,dim>> List of n points in a line between a and b, inclusive.
+ */
+template<typename T, size_t dim>
+std::list<vec<T,dim>> PointsBetween(const vec<T,dim>& a, const vec<T,dim>& b, const int& n){
+    vec<T,dim> jump = (b-a) * (1/((T)(num-1)));
+    std::list<vec<T,dim>> list;
+    for(int i = 0; i<num; i++)
+    {
+	    list.push_back(a+(jump*i));
+    }
+    return list;
+}
+
 /**
  * @class RayMoveChecker
  */
@@ -121,5 +138,7 @@ public:
         return move;
     }
 };
+
+}
 
 #endif

@@ -13,7 +13,6 @@
 
 #include<substd/vec.hpp>
 #include<substd/mat.hpp>
-#include<substd/template.hpp>
 #include<substd/graph.hpp>
 
 namespace ss{
@@ -28,7 +27,6 @@ namespace ss{
 template<class self, class storage=std::list<self*>>
 class IRegistered 
 {
-    CRTP_ASSERT(IRegistered, self);
 public:
     /**
      * @var storage registry
@@ -62,7 +60,6 @@ template<class self, class storage> storage IRegistered<self, storage>::registry
 */
 template<class self>
 class IBindable {
-    CRTP_ASSERT(IBindable, self);
 private:
     static IBindable<self>* currently_active;
 public:

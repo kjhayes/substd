@@ -2,7 +2,7 @@
 #define SUBSTD_UTIL_HPP
 
 #include<iostream>
-#include<stdint>
+#include<stdint.h>
 
 namespace ss {
 

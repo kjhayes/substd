@@ -5,7 +5,6 @@
 #include<substd/mat.hpp>
 #include<substd/interfaces.hpp>
 #include<substd/math.hpp>
-#include<substd/util.hpp>
 
 namespace ss{
 
@@ -63,7 +62,7 @@ public:
 
 ///@class RectRayMoveChecker
 template<typename T>
-class AABBRayMoveChecker : public RayMoveChecker<T,2> {
+class RectRayMoveChecker : public RayMoveChecker<T,2> {
 public:
     RectRayMoveChecker(const int& horizontal_res, const int& vertical_res) {
         std::list<T> r = PointsBetween({0.5, -0.5}, [0.5, 0.5], vertical_res);

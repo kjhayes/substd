@@ -4,4 +4,6 @@ project(substd_test)
 
 include_directories(../include)
 
+add_executable(compile_time_test compile_time_test.cpp)
 add_executable(vec_test vec_test.cpp)
+

@@ -42,7 +42,7 @@ class Tree
          * @fn Destructor
          * @brief Calls delete on all child tree nodes.
         */
-        virtual ~Tree();
+        virtual ~Tree()
         {
             for(auto i = children.begin(); i != children.end(); i++)
             {delete *i;}

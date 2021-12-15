@@ -205,7 +205,7 @@ public:
     static constexpr size_t NumberOfColumns() { return c; }
 };
 
-//These Functions Are Limiting Transform's Potentcial, 
+//These Functions Are Limiting Transform's Scope, 
 //I should try to figure out a generic way to generate rotation matrices
 //but I'm too lazy rn so this will work for what I need right now.
 

@@ -31,8 +31,13 @@
 *.out
 *.app
 
-# Build Folders
+# Folders
 builds
 build
 html
 latex
+doc
+.vscode
+
+# Specific Files
+workspace.code-workspace

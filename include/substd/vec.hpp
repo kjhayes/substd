@@ -14,6 +14,8 @@
 #include<type_traits>
 #include<iostream>
 
+#include "substd/constants.hpp"
+
 namespace ss
 {
 
@@ -216,8 +218,9 @@ public:
     }
 
     ///@fn Normalized
-    vec<ss_trig, dim> Normalized() const {
-        return LeftProd<ss_trig>(1/Magnitude());
+    template<typename OT = ss_trig>
+    vec<OT, dim> Normalized() const {
+        return LeftProd<OT>(1/Magnitude());
     }
 
     ///@fn Homogenized
